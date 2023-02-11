@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
-pd.options.plotting.backend = "plotly"
+
 def weights(alpha):
     # Set weight > 0
     alpha = alpha.sub(alpha.min(axis=1), axis=0)
@@ -16,13 +16,15 @@ def weights(alpha):
     alpha[alpha > 0.2] = 0.2
     return alpha
 
-def weights1(alpha):
+def weights1(alpha,neutrali=0):
     # Normalize
     alpha = alpha.div(alpha.abs().sum(axis=1), axis=0)
     # Set none if nan > 20
     di = alpha.index.where(alpha.isnull().sum(axis = 1) >= 20)
     di = di[~np.isnan(di)]
     alpha.loc[di] = None
+    if neutrali == 1:
+        alpha = alpha.sub(alpha.mean(axis=1),axis=0)
     # Max stock weight = 0.2
     alpha[alpha > 0.2] = 0.2
     return alpha
@@ -47,43 +49,44 @@ class Simresult():
     def __init__(self,weights,returns):
         self.weights = weights
         self.returns = returns
+        self.ret = np.sum(self.weights*self.returns.shift(-1),axis=1)
 
     def get_pnl(self):
-        i=np.sum(self.weights*self.returns.shift(-1),axis=1)+1
-        a = np.cumprod(i)
-        return a
+        i=np.cumsum(self.ret)
+        return i
 
     def get_return(self):
-        i=np.sum(self.weights*self.returns.shift(-1),axis=1)+1
-        a = np.prod(i)**(252/len(i))-1
-        return a
+        return self.ret.groupby(self.ret.index.year).agg(np.sum)
 
     def get_sharpe(self):
+        i = self.ret
         try:
-            return self.get_return()/(np.std(np.sum(self.weights*self.returns.shift(-1),axis=1)+1)*np.sqrt(252))
+            return self.get_return()/(i.groupby(i.index.year).agg(np.std)*np.sqrt(252))
         except Exception:
             return 0
         
+
     def get_turnover(self):
-        weights_t = self.weights.values[1:,:]
-        weights_t1 = self.weights.values[:-1,:]
-        turnover = np.nansum(np.abs(weights_t - weights_t1), axis = 1)
-        return np.mean(turnover)
+        weights_t = self.weights
+        weights_t1 = self.weights.shift(1)
+        turnover = np.sum(np.abs(weights_t - weights_t1),axis=1).groupby(self.weights.index.year).agg(np.mean)
+        return turnover    
+
 
     def get_fitness(self):
-        fitness = self.get_sharpe()*np.sqrt(self.get_return()/np.max(np.array([self.get_turnover(),0.125])))
+        fitness = self.get_sharpe()*np.sqrt(np.abs(self.get_return()/self.get_turnover()))
         return np.mean(fitness)          
 
     def get_summary(self):
-        return pd.DataFrame({'Return': [self.get_return()], 
-                             'Sharpe': [self.get_sharpe()], 
-                             'Turnover': [self.get_turnover()],
-                             'Fitness': [self.get_fitness()]
-                            })
+        return pd.DataFrame({'Return': self.get_return().values, 
+                             'Sharpe': self.get_sharpe().values, 
+                            'Turnover': self.get_turnover().values,
+                             
+                            }, index=self.get_return().index)
         
-    def plot_pnl(self):
-        plt.plot(self.get_pnl(), label="My strategy")
-        plt.ylabel("Cummulative return")
+    def plot_pnl(self,type=""):
+        plt.plot(self.get_pnl(), label=type)
         plt.xlabel("Date")
         plt.title("PnL")
+        plt.legend()
 
