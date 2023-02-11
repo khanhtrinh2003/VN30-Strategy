@@ -26,6 +26,7 @@ def weights1(alpha):
     # Max stock weight = 0.2
     alpha[alpha > 0.2] = 0.2
     return alpha
+
 def marko_weights(prices):
     returns = prices.pct_change().mean()
     covariance = prices.pct_change().cov()
@@ -81,7 +82,7 @@ class Simresult():
                             })
         
     def plot_pnl(self):
-        plt.plot(self.get_pnl())
+        plt.plot(self.get_pnl(), label="My strategy")
         plt.ylabel("Cummulative return")
         plt.xlabel("Date")
         plt.title("PnL")
