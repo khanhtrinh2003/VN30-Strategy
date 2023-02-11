@@ -56,13 +56,12 @@ class Simresult():
         return i
 
     def get_return(self):
-        return self.ret.groupby(self.ret.index.year).agg(np.sum)
+        return self.ret.groupby(self.ret.index.year).agg(np.mean)*252
 
     def get_sharpe(self):
         i = self.ret
         return self.get_return()/(i.groupby(i.index.year).agg(np.std)*np.sqrt(252))
         
-
     def get_turnover(self):
         weights_t = self.weights
         weights_t1 = self.weights.shift(1)
@@ -83,7 +82,20 @@ class Simresult():
                             'Turnover': self.get_turnover().values,
                             "Fitness": self.get_fitness().values,
                             "Margin": self.get_margin().values
-                            }, index=self.get_return().index)
+                            }, index=self.get_return().index)    
+    
+    def get_overall(self):
+        r = np.mean(self.ret)*252
+        s = r/(np.std(self.ret)*np.sqrt(252))
+        t = np.mean(self.get_turnover())
+        f = s*np.sqrt(np.abs(r/t))
+        m = r/t
+        return pd.DataFrame({'Return': [r], 
+                             'Sharpe': [s], 
+                            'Turnover': [t],
+                            "Fitness": [f],
+                            "Margin": [m],
+                            })
         
     def plot_pnl(self,type=""):
         plt.plot(self.get_pnl(), label=type)
