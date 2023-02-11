@@ -64,16 +64,21 @@ class Simresult():
             return 0
         
     def get_turnover(self):
-        
         weights_t = self.weights.values[1:,:]
         weights_t1 = self.weights.values[:-1,:]
         turnover = np.nansum(np.abs(weights_t - weights_t1), axis = 1)
-        return np.mean(turnover)          
+        return np.mean(turnover)
+
+    def get_fitness(self):
+        fitness = self.get_sharpe()*np.sqrt(self.get_return()/np.max(np.array([self.get_turnover(),0.125])))
+        return np.mean(fitness)          
 
     def get_summary(self):
         return pd.DataFrame({'Return': [self.get_return()], 
                              'Sharpe': [self.get_sharpe()], 
-                             'Turnover': [self.get_turnover()]})
+                             'Turnover': [self.get_turnover()],
+                             'Fitness': [self.get_fitness()]
+                            })
         
     def plot_pnl(self):
         plt.plot(self.get_pnl())
