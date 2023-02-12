@@ -13,6 +13,15 @@ def weights(alpha,neutrali=0):
     alpha.loc[di] = None
     if neutrali == 1:
         alpha = alpha.sub(alpha.mean(axis=1),axis=0)
+        positive_alpha = alpha[alpha > 0]
+        negative_alpha = alpha[alpha < 0]
+        positive_sum = positive_alpha.sum(axis=1)
+        negative_sum = negative_alpha.abs().sum(axis=1)
+        positive_alpha = positive_alpha.div(positive_sum, axis=0)
+        negative_alpha = negative_alpha.div(negative_sum, axis=0)
+        alpha[alpha > 0] = positive_alpha
+        alpha[alpha < 0] = negative_alpha
+
     # Max stock weight = 0.2
     alpha[alpha > 0.2] = 0.2
     return alpha
