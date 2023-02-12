@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
-
+from vnstock import *
 
 def weights(alpha,neutrali=0):
     # Normalize
@@ -101,3 +101,9 @@ class Simresult():
         plt.xlabel("Date")
         plt.title("PnL")
         plt.legend()
+
+def plot_vnindex():
+    m=get_index_series(index_code='VNINDEX', time_range='TenYears')
+    m["i"]=pd.to_datetime(m["tradingDate"])
+    plt.plot(m["i"],np.cumsum(m["indexValue"].pct_change()), label="VNINDEX")
+    plt.legend()    

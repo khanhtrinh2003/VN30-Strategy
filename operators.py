@@ -20,7 +20,7 @@ def ts_max(x,d):
     return x.rolling(d).max()
 
 def ts_product(x,d):
-    return x.rolling(d).agg(np.prod)
+    return x.rolling(d).apply(np.prod)
 
 def ts_median(x, d):
     return x.rolling(d).median()
