@@ -66,7 +66,9 @@ class Simresult():
         return turnover    
 
     def get_fitness(self):
-        fitness = self.get_sharpe()*np.sqrt(np.abs(self.get_return()/self.get_turnover()))
+        turnover = self.get_turnover()
+        turnover = np.maximum(turnover, 0.125)
+        fitness = self.get_sharpe() * np.sqrt(np.abs(self.get_return() / turnover))
         return fitness
 
     def get_margin(self):
