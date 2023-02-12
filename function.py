@@ -40,11 +40,11 @@ class Simresult():
         self.ret = np.sum(self.weights*self.returns.shift(-1),axis=1)
 
     def get_pnl(self):
-        i=np.cumsum(self.ret)
-        return i
+        return np.cumsum(self.ret)
 
     def get_return(self):
-        return self.ret.groupby(self.ret.index.year).agg(np.mean)*252
+        i = self.ret
+        return i.groupby(i.index.year).agg(np.mean)*252
 
     def get_sharpe(self):
         i = self.ret
