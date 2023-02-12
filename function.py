@@ -77,7 +77,7 @@ class Simresult():
         s = r/(np.std(self.ret)*np.sqrt(252))
         t = np.mean(self.get_turnover())
         f = s*np.sqrt(np.abs(r/t))
-        m = r/t
+        m = r/t*1000
         return pd.DataFrame({'Return': [r], 
                              'Sharpe': [s], 
                             'Turnover': [t],
