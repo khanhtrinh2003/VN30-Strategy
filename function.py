@@ -114,5 +114,5 @@ def save_weights(weight,x):
     d1.columns = [x]
     d = pd.merge(d,d1, left_index=True,right_index=True)
     d["Delta"] = d.iloc[:,len(d.columns)-1]-d.iloc[:,len(d.columns)-2]
-    d.sort_values(by="Delta",ascending=False)
+    d = d.sort_values(by="Delta",ascending=False)
     d.to_csv("D:\KTrinh\python\WQ\Weights\Weights.csv")
