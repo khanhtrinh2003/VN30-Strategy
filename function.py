@@ -36,7 +36,7 @@ def marko_weights(prices):
     def neg_sharpe_ratio(weights):
         portfolio_return = np.sum(returns * weights)
         portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(covariance, weights)))
-        sharpe_ratio = -(portfolio_return - 0.02) / portfolio_volatility
+        sharpe_ratio = -(portfolio_return - 0) / portfolio_volatility
         return sharpe_ratio
     constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
     result = minimize(neg_sharpe_ratio, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
