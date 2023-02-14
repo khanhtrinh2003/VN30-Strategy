@@ -8,7 +8,7 @@ def weights(alpha,neutrali=0):
     # Normalize
     alpha = alpha.div(alpha.abs().sum(axis=1), axis=0)
     # Set none if nan > 20
-    di = alpha.index.where(alpha.isnull().sum(axis=1) >= 20).to_numpy()
+    di = alpha.index.where(alpha.isnull().sum(axis=1) >= 20)
     di = di[~np.isnan(di)]
     alpha.loc[di] = None
     if neutrali == 1:
@@ -33,6 +33,7 @@ def prob_weights(prices,lag):
     nominator_data =(abs_diff_data+diff_data)/2
     a = (abs_diff_data-diff_data)/2
     prob = nominator_data.rolling(lag).sum()/((abs_diff_data).rolling(lag).sum())
+    prob[prob<=0.5]=-prob[prob<=0.5]
     return prob
 
 def marko_weights(prices):
@@ -45,7 +46,7 @@ def marko_weights(prices):
     def neg_sharpe_ratio(weights):
         portfolio_return = np.sum(returns * weights)
         portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(covariance, weights)))
-        sharpe_ratio = -(portfolio_return - 0) / portfolio_volatility
+        sharpe_ratio = -(portfolio_return - 0.02) / portfolio_volatility
         return sharpe_ratio
     constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
     result = minimize(neg_sharpe_ratio, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
