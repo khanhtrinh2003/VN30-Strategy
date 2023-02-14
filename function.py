@@ -26,6 +26,15 @@ def weights(alpha,neutrali=0):
     alpha[alpha > 0.2] = 0.2
     return alpha
 
+def prob_weights(prices,lag):    
+    lag = lag
+    diff_data = prices.diff()
+    abs_diff_data = abs(diff_data)
+    nominator_data =(abs_diff_data+diff_data)/2
+    a = (abs_diff_data-diff_data)/2
+    prob = nominator_data.rolling(lag).sum()/((abs_diff_data).rolling(lag).sum())
+    return prob
+
 def marko_weights(prices):
     returns = prices.pct_change().mean()
     covariance = prices.pct_change().cov()
