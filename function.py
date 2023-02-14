@@ -36,21 +36,30 @@ def prob_weights(prices,lag):
     prob[prob<=0.5]=-prob[prob<=0.5]
     return prob
 
-def marko_weights(prices):
-    returns = prices.pct_change().mean()
-    covariance = prices.pct_change().cov()
-    risk_aversion = 1
-    n = returns.shape[0]
-    init_guess = np.repeat(1/n, n)
-    bounds = [(0, 1) for i in range(n)]
-    def neg_sharpe_ratio(weights):
-        portfolio_return = np.sum(returns * weights)
-        portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(covariance, weights)))
-        sharpe_ratio = -(portfolio_return - 0.02) / portfolio_volatility
-        return sharpe_ratio
-    constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
-    result = minimize(neg_sharpe_ratio, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
-    return result.x
+def marko_weights(prices, lag):
+    def weight_mar(prices):
+        returns = prices.pct_change().mean()
+        covariance = prices.pct_change().cov()
+        risk_aversion = 1
+        n = returns.shape[0]
+        init_guess = np.repeat(1/n, n)
+        bounds = [(0, 1) for i in range(n)]
+
+        def neg_sharpe_ratio(weights):
+            portfolio_return = np.sum(returns * weights)
+            portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(covariance, weights)))
+            sharpe_ratio = -(portfolio_return - 0.02) / portfolio_volatility
+            return sharpe_ratio
+        constraints = ({'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+        result = minimize(neg_sharpe_ratio, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
+        return result.x
+
+    mark = pd.DataFrame(np.nan, index=prices.index, columns=prices.columns)
+    for i in range(int(len(prices)/lag)):
+        mark.iloc[(i+1)*lag,:] = weight_mar(prices[i*lag:(i+1)*lag])
+    mark.ffill(inplace=True)      
+    
+    return mark
 
 class Simresult():
     def __init__(self,weights,returns):
@@ -97,7 +106,7 @@ class Simresult():
         r = np.mean(self.ret)*252
         s = r/(np.std(self.ret)*np.sqrt(252))
         t = np.mean(self.get_turnover())
-        f = s*np.sqrt(np.abs(r/t))
+        f = s*np.sqrt(np.abs(r/np.maximum(t, 0.125)))
         m = r/t*1000
         return pd.DataFrame({'Return': [r], 
                              'Sharpe': [s], 
