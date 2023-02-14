@@ -49,9 +49,12 @@ def ts_max_diff(x, d):
 def ts_kurtosis(x, d):
     return x.rolling(d).kurt()
 
-def z_score(x):
-    return (x-x.mean(axis=0))/x.std(axis=0)
+def zscore(x):
+    return x.sub(x.mean(axis=1),axis=0).div(x.std(axis=1),axis=0)
 
+def ts_zscore(x,d):
+    return((x-x.rolling(d).mean())/x.rolling(d).std())
+    
 def ts_av_diff(x, d):
     return x-ts_mean(x,d)
 

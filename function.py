@@ -8,7 +8,7 @@ def weights(alpha,neutrali=0):
     # Normalize
     alpha = alpha.div(alpha.abs().sum(axis=1), axis=0)
     # Set none if nan > 20
-    di = alpha.index.where(alpha.isnull().sum(axis = 1) >= 20)
+    di = alpha.index.where(alpha.isnull().sum(axis=1) >= 20).to_numpy()
     di = di[~np.isnan(di)]
     alpha.loc[di] = None
     if neutrali == 1:
@@ -106,4 +106,13 @@ def plot_vnindex():
     m=get_index_series(index_code='VNINDEX', time_range='TenYears')
     m["i"]=pd.to_datetime(m["tradingDate"])
     plt.plot(m["i"],np.cumsum(m["indexValue"].pct_change()), label="VNINDEX")
-    plt.legend()    
+    plt.legend()
+
+def save_weights(weight,x):
+    d = pd.read_csv("D:\KTrinh\python\WQ\Weights\Weights.csv",index_col="ticker").drop(columns="Delta")
+    d1 = pd.DataFrame(weight.iloc[-1,:].sort_values(ascending=False))
+    d1.columns = [x]
+    d = pd.merge(d,d1, left_index=True,right_index=True)
+    d["Delta"] = d.iloc[:,len(d.columns)-1]-d.iloc[:,len(d.columns)-2]
+    d.sort_values(by="Delta",ascending=False)
+    d.to_csv("D:\KTrinh\python\WQ\Weights\Weights.csv")
