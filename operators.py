@@ -71,7 +71,7 @@ def ts_scale(x, d, constant = 0):
     return (x - ts_min(x, d)) / (ts_max(x, d) - ts_min(x, d)) + constant
 
 
-def ts_decay_exp(x,d,f):    
+def ts_decay_exp(x,d,f=1):    
     def TS_Decay_Exp_Window(x, d, factor = 1):
         weights = np.power(factor, np.arange(d))
         weighted_sum = np.sum(x[-d:] * weights[::-1])
