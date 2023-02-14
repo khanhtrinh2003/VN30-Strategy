@@ -69,3 +69,26 @@ def ts_moment(x, d, k=0):
 
 def ts_scale(x, d, constant = 0):
     return (x - ts_min(x, d)) / (ts_max(x, d) - ts_min(x, d)) + constant
+
+
+def ts_decay_exp(x,d,f):    
+    def TS_Decay_Exp_Window(x, d, factor = 1):
+        weights = np.power(factor, np.arange(d))
+        weighted_sum = np.sum(x[-d:] * weights[::-1])
+        denominator = np.sum(weights)
+        return weighted_sum / denominator    
+    # Assuming x is a pandas DataFrame with a column called 'value'
+    rolling_mean = x.rolling(window=d).apply(TS_Decay_Exp_Window, args=(d,f))
+    return rolling_mean
+
+def ts_decay_linear(x,d):
+    def TS_Decay_Linear(x, d):
+        weights = np.arange(1, d+1)[::-1]
+        weighted_sum = np.sum(x[-d:] * weights)
+        denominator = np.sum(weights)
+        return weighted_sum / denominator    
+    # Assuming x is a pandas DataFrame with a column called 'value'
+    rolling_mean = x.rolling(window=d).apply(TS_Decay_Linear, args=(d,))
+    return rolling_mean
+
+
