@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 
 def rank(x):
-    return x.rank(axis=1,ascending=True)
+    p = x.rank(axis=1,ascending=True)
+    return p.sub(p.min(axis=1),axis=0).div(p.max(axis=1).sub(p.min(axis=1),axis=0),axis=0)
 
 def ts_sum(x,d):
     return x.rolling(d).sum()
@@ -90,5 +91,10 @@ def ts_decay_linear(x,d):
     # Assuming x is a pandas DataFrame with a column called 'value'
     rolling_mean = x.rolling(window=d).apply(TS_Decay_Linear, args=(d,))
     return rolling_mean
+
+def trade_when(condition, x, y):
+    df = pd.DataFrame(np.nan, index=x.index, columns=x.columns)
+    df[df.columns] = np.where(condition,x,y)
+    return df
 
 
