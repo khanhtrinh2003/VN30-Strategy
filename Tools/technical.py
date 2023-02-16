@@ -31,12 +31,12 @@ def mae(alpha):
         df = trade_when(low < le6,alpha + 0.5*abs(alpha),
                         trade_when(low < le5,alpha + 0.4*abs(alpha),
                                 trade_when(low < le4,alpha + 0.32*abs(alpha),
-                                                trade_when(low < le3,alpha + 0.25*abs(alpha),
-                                                        trade_when(low < le2,alpha + 0.2*abs(alpha),
-                                                                trade_when(low < le1,alpha+0.1*abs(alpha),alpha)
-                                                                )
+                                        trade_when(low < le3,alpha + 0.25*abs(alpha),
+                                                trade_when(low < le2,alpha + 0.2*abs(alpha),
+                                                        trade_when(low < le1,alpha+0.1*abs(alpha),alpha)
                                                         )
                                                 )
+                                        )
                                 )
                         )
         return df
