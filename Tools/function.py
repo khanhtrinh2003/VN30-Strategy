@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from vnstock import *
 
-close = pd.read_csv("Data/close.csv", index_col="TradingDate", parse_dates=True)
+close = pd.read_csv("../Data/close.csv", index_col="TradingDate", parse_dates=True)
 returns = close.pct_change()
 
 def weights(alpha,neutrali=0):
