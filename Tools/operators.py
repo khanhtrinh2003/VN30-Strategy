@@ -3,10 +3,46 @@ import numpy as np
 
 # Logical Operators
 def if_else(condition, x, y):
-    df = pd.DataFrame(np.nan, index=x.index, columns=x.columns)
+    df = pd.DataFrame(np.nan, index=condition.index, columns=condition.columns)
     df[df.columns] = np.where(condition,x,y)
     return df
 
+# Transformational Operators
+def arc_cos(x):
+    return x.transform(np.arccos)
+
+def arc_sin(x):
+    return x.transform(np.arcsin)
+
+def arc_tan(x):
+    return x.transform(np.arctan)
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
+def tanh(x):
+    return x.transform(np.tanh)            
+
+def trade_when(x, y, z):
+    """
+    This operator can be used in order to change Alpha values only under a specified condition and to hold Alpha values in other cases. 
+    Args:
+        x: triggerTradeExp
+        y: AlphaExp
+        z: triggerExitExp
+
+    Returns:
+        If triggerExitExp > 0, Alpha = nan;
+
+        Else if triggerTradeExp > 0, Alpha = AlphaExp;
+
+        else, Alpha = previousAlpha  
+    """
+    if_else(z,np.nan,
+            if_else(
+                x, y
+            )
+            )
 # Cross Sectional Operators
 def rank(x):
     p = x.rank(axis=1,ascending=True)
