@@ -28,12 +28,12 @@ def mae(alpha):
         le4 = s * 0.8
         le5 = s * 0.75
         le6 = s * 0.70    
-        df = trade_when(low < le6,alpha + 0.5*abs(alpha),
-                        trade_when(low < le5,alpha + 0.4*abs(alpha),
-                                trade_when(low < le4,alpha + 0.32*abs(alpha),
-                                        trade_when(low < le3,alpha + 0.25*abs(alpha),
-                                                trade_when(low < le2,alpha + 0.2*abs(alpha),
-                                                        trade_when(low < le1,alpha+0.1*abs(alpha),alpha)
+        df = if_else(low < le6,alpha + 0.5*abs(alpha),
+                        if_else(low < le5,alpha + 0.4*abs(alpha),
+                                if_else(low < le4,alpha + 0.32*abs(alpha),
+                                        if_else(low < le3,alpha + 0.25*abs(alpha),
+                                                if_else(low < le2,alpha + 0.2*abs(alpha),
+                                                        if_else(low < le1,alpha+0.1*abs(alpha),alpha)
                                                         )
                                                 )
                                         )
@@ -42,9 +42,9 @@ def mae(alpha):
         return df
 
 def rsi(alpha):
-        RSI = (100 - 100 / (1 + ts_sum(trade_when(ts_delta(close,1) > 0, ts_delta(close,1), 0), 14) / ts_sum(trade_when(ts_delta(close,1)< 0, - ts_delta(close,1),0), 14)))
+        RSI = (100 - 100 / (1 + ts_sum(if_else(ts_delta(close,1) > 0, ts_delta(close,1), 0), 14) / ts_sum(if_else(ts_delta(close,1)< 0, - ts_delta(close,1),0), 14)))
         SRSI = (RSI-ts_min(RSI,14))/(ts_max(RSI,14)-ts_min(RSI,14))
-        return trade_when(SRSI <0.1, alpha+0.1*abs(alpha), alpha)
+        return if_else(SRSI <0.1, alpha+0.1*abs(alpha), alpha)
 
 def kst(alpha):
         #Pring's Know Sure Thing (KST)
@@ -54,14 +54,14 @@ def kst(alpha):
         RCMA4 = ts_decay_linear(ts_delta(close, 30), 15)
         KST = (RCMA1 * 1) + (RCMA2 * 2) + (RCMA3 * 3) + (RCMA4 * 4)
         SIG = ts_decay_linear(KST, 9)
-        return trade_when(KST < SIG, alpha + 0.1 * abs(alpha), alpha)
+        return if_else(KST < SIG, alpha + 0.1 * abs(alpha), alpha)
 
 def macd(alpha):
         #MACD (Moving Average Convergence/Divergence Oscillator)
         EMA_12=(close-ts_delay((ts_sum(close,12)/12),1))*0.1538+ts_delay((ts_sum(close,12)/12),1)
         EMA_26=(close-ts_delay((ts_sum(close,26)/26),1))*0.0741+ts_delay((ts_sum(close,26)/26),1)
         MACD=EMA_12-EMA_26
-        return trade_when(MACD<0,alpha+0.1*abs(alpha),alpha)
+        return if_else(MACD<0,alpha+0.1*abs(alpha),alpha)
 
 def macd_his(alpha):
         #MACD Histogram
@@ -70,4 +70,4 @@ def macd_his(alpha):
         MACDLine =  EMA12 - EMA26
         SignalLine=ts_decay_linear(MACDLine,9)
         MACDHistogram = MACDLine - SignalLine
-        return trade_when(MACDHistogram > 0,alpha + 0.1*abs(alpha),alpha)
+        return if_else(MACDHistogram > 0,alpha + 0.5*abs(alpha),alpha)
