@@ -51,7 +51,32 @@ def zscore(x):
     return x.sub(x.mean(axis=1),axis=0).div(x.std(axis=1),axis=0)
 
 # Group Operators
-
+def group_count(x, group):
+    pass
+def group_max(x, group):
+    pass
+def group_mean(x, weight, group):
+    pass
+def group_median(x, group):
+    pass
+def group_min(x, group):
+    pass
+def group_neutralize(x, group):
+    pass
+def group_normalize(x, group, constantCheck=False, tolerance=0.01, scale=1):
+    pass
+def group_percentage(x, group, percentage=0.5):
+    pass
+def group_rank(x, group):
+    pass
+def group_scale(x, group):
+    pass
+def group_std_dev(x, group):
+    pass
+def group_sum(x, group):
+    pass
+def group_zscore(x, group):
+    pass
 
 # Time Series Operators
 def days_from_last_change(x):
