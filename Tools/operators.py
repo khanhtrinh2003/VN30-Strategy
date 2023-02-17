@@ -1,6 +1,25 @@
 import pandas as pd
 import numpy as np
 
+# Arithmetic Operators
+def ceiling(x):
+    return np.ceil(x)
+
+def floor(x):
+    return np.floor(x)
+
+def exp(x):
+    return np.exp(x)
+
+def log(x):
+    return np.log(x)
+
+def round(x):
+    return np.round(x)
+
+def sign(x):
+    return np.sign(x)
+
 # Logical Operators
 def if_else(condition, x, y):
     df = pd.DataFrame(np.nan, index=condition.index, columns=condition.columns)
