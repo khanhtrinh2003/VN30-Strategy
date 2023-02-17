@@ -1,7 +1,4 @@
 from vnstock import *
-from Tools.function import *
-from Tools.operators import *
-from Tools.technical import *
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -9,7 +6,6 @@ import numpy as np
 
 today = pd.to_datetime('today').date()
 formatted_date = today.strftime('%Y-%m-%d')
-print(formatted_date)
 
 ticket = ['ACB', 'BCM', 'BID', 'BVH', 'CTG', 'FPT', 'GAS', 'GVR', 'HDB', 'HPG', 'MBB', 'MSN', 'MWG', 'NVL', 'PDR', 'PLX', 'POW', 'SAB', 'SSI', 'STB', 'TCB', 'TPB', 'VCB', 'VHM', 'VIB', 'VIC', 'VJC', 'VNM', 'VPB', 'VRE']
 frame = []

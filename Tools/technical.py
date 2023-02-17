@@ -7,15 +7,15 @@ from operators import *
 import pandas as pd
 import numpy as np
 
-close= pd.read_csv("D:/KTrinh/python/WQ/Data/close.csv",index_col="TradingDate")
+close= pd.read_csv("Data/close.csv",index_col="TradingDate")
 close.index = pd.to_datetime(close.index)
-high= pd.read_csv("D:/KTrinh/python/WQ/Data/high.csv",index_col="TradingDate")
+high= pd.read_csv("Data/high.csv",index_col="TradingDate")
 high.index = pd.to_datetime(high.index)
-low= pd.read_csv("D:/KTrinh/python/WQ/Data/low.csv",index_col="TradingDate")
+low= pd.read_csv("Data/low.csv",index_col="TradingDate")
 low.index = pd.to_datetime(low.index)
-open= pd.read_csv("D:/KTrinh/python/WQ/Data/open.csv",index_col="TradingDate")
+open= pd.read_csv("Data/open.csv",index_col="TradingDate")
 open.index = pd.to_datetime(open.index)
-volume= pd.read_csv("D:/KTrinh/python/WQ/Data/volume.csv",index_col="TradingDate")
+volume= pd.read_csv("Data/volume.csv",index_col="TradingDate")
 volume.index = pd.to_datetime(open.index)
 
 returns = close.pct_change()

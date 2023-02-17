@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from vnstock import *
 
+close= pd.read_csv("Data/close.csv",index_col="TradingDate")
+close.index = pd.to_datetime(close.index)
+returns = close.pct_change()
+
 def weights(alpha,neutrali=0):
     # Normalize
     alpha = alpha.div(alpha.abs().sum(axis=1), axis=0)
@@ -60,6 +64,21 @@ def marko_weights(prices, lag):
     mark.ffill(inplace=True)      
     
     return mark
+
+def plot_vnindex():
+    m=get_index_series(index_code='VNINDEX', time_range='TenYears')
+    m["i"]=pd.to_datetime(m["tradingDate"])
+    plt.plot(m["i"],np.cumsum(m["indexValue"].pct_change()), label="VNINDEX")
+    plt.legend()
+
+def save_weights(weight,x):
+    d = pd.read_csv("Weights\Weights.csv",index_col="ticker").drop(columns="Delta")
+    d1 = pd.DataFrame(weight.iloc[-1,:].sort_values(ascending=False))
+    d1.columns = [x]
+    d = pd.merge(d,d1, left_index=True,right_index=True)
+    d["Delta"] = d.iloc[:,len(d.columns)-1]-d.iloc[:,len(d.columns)-2]
+    d = d.sort_values(by="Delta",ascending=False)
+    d.to_csv("Weights\Weights.csv")
 
 class Simresult():
     def __init__(self,weights,returns):
@@ -121,17 +140,36 @@ class Simresult():
         plt.title("PnL")
         plt.legend()
 
-def plot_vnindex():
-    m=get_index_series(index_code='VNINDEX', time_range='TenYears')
-    m["i"]=pd.to_datetime(m["tradingDate"])
-    plt.plot(m["i"],np.cumsum(m["indexValue"].pct_change()), label="VNINDEX")
-    plt.legend()
+class Stimulate():
+    def __init__(self,alpha):
+        self.alpha = alpha
+        self.non_neu = weights(self.alpha,neutrali=0)
+        self.neu = weights(self.alpha,neutrali=1)
+        self.ketqua_non = Simresult(self.non_neu,returns)
+        self.ketqua_neu = Simresult(self.neu,returns)
 
-def save_weights(weight,x):
-    d = pd.read_csv("D:\KTrinh\python\WQ\Weights\Weights.csv",index_col="ticker").drop(columns="Delta")
-    d1 = pd.DataFrame(weight.iloc[-1,:].sort_values(ascending=False))
-    d1.columns = [x]
-    d = pd.merge(d,d1, left_index=True,right_index=True)
-    d["Delta"] = d.iloc[:,len(d.columns)-1]-d.iloc[:,len(d.columns)-2]
-    d = d.sort_values(by="Delta",ascending=False)
-    d.to_csv("D:\KTrinh\python\WQ\Weights\Weights.csv")
+    def overall(self):
+        print("Overall of non neutralize")
+        print(self.ketqua_non.get_overall())
+        print("Overall of neutralize")
+        print(self.ketqua_neu.get_overall())
+
+    def summary(self):
+        print("Summary of non neutralize")
+        print(self.ketqua_non.get_summary())
+        print("Summary of neutralize")
+        print(self.ketqua_neu.get_summary())
+
+    def plot_pnl(self):
+        self.ketqua_neu.plot_pnl("Neutralizing")
+        self.ketqua_non.plot_pnl("Non neutralizing")
+        plot_vnindex()
+
+    def get_weights(self,non_neu=0):
+        if non_neu==0:
+            print(self.neu.iloc[-1,:].sort_values(ascending=False))
+        else:
+            print("Neutralization")
+            print(self.neu.iloc[-1,:].sort_values(ascending=False))
+            print("Non-Neutralization")
+            print(self.non_neu.iloc[-1,:].sort_values(ascending=False))
