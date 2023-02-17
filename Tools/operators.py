@@ -23,26 +23,6 @@ def sigmoid(x):
 def tanh(x):
     return x.transform(np.tanh)            
 
-def trade_when(x, y, z):
-    """
-    This operator can be used in order to change Alpha values only under a specified condition and to hold Alpha values in other cases. 
-    Args:
-        x: triggerTradeExp
-        y: AlphaExp
-        z: triggerExitExp
-
-    Returns:
-        If triggerExitExp > 0, Alpha = nan;
-
-        Else if triggerTradeExp > 0, Alpha = AlphaExp;
-
-        else, Alpha = previousAlpha  
-    """
-    if_else(z,np.nan,
-            if_else(
-                x, y
-            )
-            )
 # Cross Sectional Operators
 def rank(x):
     p = x.rank(axis=1,ascending=True)
@@ -50,6 +30,9 @@ def rank(x):
 
 def zscore(x):
     return x.sub(x.mean(axis=1),axis=0).div(x.std(axis=1),axis=0)
+
+# Group Operators
+
 
 # Time Series Operators
 def days_from_last_change(x):
