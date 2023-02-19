@@ -89,22 +89,77 @@ def zscore(x):
 
 # Group Operators
 def group_count(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(len)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
 def group_max(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.max)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
-def group_mean(x, weight, group):
-    pass
+def group_means(x,group):
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.mean)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
 def group_median(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.median)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
 def group_min(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.min)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
 def group_neutralize(x, group):
-    pass
+    return x - group_means(x,group)
 
 def group_normalize(x, group, constantCheck=False, tolerance=0.01, scale=1):
     pass
@@ -113,19 +168,52 @@ def group_percentage(x, group, percentage=0.5):
     pass
 
 def group_rank(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).rank()
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
 
 def group_scale(x, group):
-    pass
-
-def group_std(x, group):
-    pass
+    return (x-group_min(x,group))/(group_max(x,group)-group_min(x,group))
 
 def group_sum(x, group):
-    pass
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.sum)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df
+
+def group_std(x, group):
+    df = pd.DataFrame()
+    g = group.values
+    v = x.values
+    va = []
+    for i in range(len(g)):
+        df.index = g[i]
+        df["v"] = v[i]
+        df.v=df.groupby(df.index).agg(np.std)
+        va.append(df["v"].to_list())
+    df = pd.DataFrame(va)
+    df.index = x.index
+    return df    
 
 def group_zscore(x, group):
-    pass
+    return group_neutralize(x,group)/group_std(x,group)
 
 # Time Series Operators
 def days_from_last_change(x):
@@ -169,20 +257,20 @@ def ts_co_kurtosis(y, x, d):
     pass
 
 def ts_corr(x, y, d):
-    # Create an empty dataframe to store the covariance results
-    covariance = pd.DataFrame()
-    cov1 = pd.DataFrame()
+    
+    correl = pd.DataFrame()
+    corr1 = pd.DataFrame()
     # Iterate over each column in df
     df = pd.DataFrame()
     for col1 in y.columns:
-            # Calculate the covariance between the two columns and store the result in the covariance dataframe
+            # Calculate the Correlation between the two columns and store the result in the covariance dataframe
             df['a'] = y[col1]
             df['b'] = x[col1]
             
             col_name = f'{col1}'
-            covariance[col_name] = df.rolling(d).corr().unstack()['a']['b']
-            cov1 = pd.concat([cov1,covariance])
-    return cov1
+            correl[col_name] = df.rolling(d).corr().unstack()['a']['b']
+            corr1 = pd.concat([corr1,correl])
+    return corr1
 
 def ts_co_skewness(y, x, d):
     pass
