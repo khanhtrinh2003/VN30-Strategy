@@ -60,6 +60,7 @@ def tanh(x):
 
 # Cross Sectional Operators
 
+
 def rank(x):
     p = x.rank(axis=1,ascending=True)
     return p.sub(p.min(axis=1),axis=0).div(p.max(axis=1).sub(p.min(axis=1),axis=0),axis=0)
