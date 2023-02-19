@@ -76,3 +76,19 @@ def get_industry():
         except Exception:
             continue
     return industry        
+
+def fndl(field="asset"):
+    data = pd.read_csv("D:/KTrinh/python/VN30-Strategy/Fundamental/total.csv",index_col="CHỈ TIÊU")
+    data.drop('Unnamed: 0',axis=1, inplace=True)
+    df = data.groupby([data.index,"ticker"]).agg(sum).T
+    
+    close = pd.read_csv("D:\KTrinh\python\VN30-Strategy\Data\close.csv", index_col="TradingDate", parse_dates=True)
+    df1 = pd.DataFrame(np.nan, index=close.index, columns=close.columns)
+    df1.index = df1.index.to_period('Q').strftime('Q%q %Y')
+    df=df[field]
+    df1.loc[df.index,df.columns]=df.loc[df.index,df.columns]
+
+    df1.ffill(inplace=True)
+    df1.fillna(0,inplace=True)
+    df1.index=close.index    
+    return df1
