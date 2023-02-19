@@ -100,6 +100,7 @@ def group_count(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_max(x, group):
@@ -114,6 +115,7 @@ def group_max(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_means(x,group):
@@ -128,6 +130,7 @@ def group_means(x,group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_median(x, group):
@@ -142,6 +145,7 @@ def group_median(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_min(x, group):
@@ -156,6 +160,7 @@ def group_min(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_neutralize(x, group):
@@ -179,6 +184,7 @@ def group_rank(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_scale(x, group):
@@ -196,6 +202,7 @@ def group_sum(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df
 
 def group_std(x, group):
@@ -210,6 +217,7 @@ def group_std(x, group):
         va.append(df["v"].to_list())
     df = pd.DataFrame(va)
     df.index = x.index
+    df.columns = x.columns
     return df    
 
 def group_zscore(x, group):
