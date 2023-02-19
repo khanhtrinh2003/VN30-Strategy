@@ -60,7 +60,6 @@ def tanh(x):
 
 # Cross Sectional Operators
 
-
 def rank(x):
     p = x.rank(axis=1,ascending=True)
     return p.sub(p.min(axis=1),axis=0).div(p.max(axis=1).sub(p.min(axis=1),axis=0),axis=0)
@@ -167,8 +166,8 @@ def group_min(x, group):
 def group_neutralize(x, group):
     return x - group_means(x,group)
 
-def group_normalize(x, group, constantCheck=False, tolerance=0.01, scale=1):
-    pass
+def group_normalize(x, group, scale=1):
+    return x*scale/group_sum(abs(x),group)
 
 def group_percentage(x, group, percentage=0.5):
     pass
