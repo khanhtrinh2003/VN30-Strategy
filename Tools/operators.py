@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import statsmodels.api as sm
 
 # Arithmetic Operators
 def ceiling(x):
@@ -63,6 +64,26 @@ def rank(x):
     p = x.rank(axis=1,ascending=True)
     return p.sub(p.min(axis=1),axis=0).div(p.max(axis=1).sub(p.min(axis=1),axis=0),axis=0)
 
+def truncate_values(x, max_percent=0.1):
+    """
+    Truncate all values of x to max_percent of the sum of all values.
+    
+    Parameters:
+    x (pandas.DataFrame): input DataFrame with instrument values
+    max_percent (float): maximum percentage (in decimal notation) that each value can have
+    
+    Returns:
+    pandas.DataFrame: output DataFrame with truncated values
+    """
+    # Compute sum of all values
+    total = x.sum(axis=1)
+    
+    # Compute maximum allowed value for each row
+    max_value = total * max_percent
+    
+    # Truncate values that exceed the maximum
+    return x.apply(lambda row: np.minimum(row, max_value[row.name]), axis=1)
+   
 def zscore(x):
     return x.sub(x.mean(axis=1),axis=0).div(x.std(axis=1),axis=0)
 
@@ -148,7 +169,20 @@ def ts_co_kurtosis(y, x, d):
     pass
 
 def ts_corr(x, y, d):
-    pass
+    # Create an empty dataframe to store the covariance results
+    covariance = pd.DataFrame()
+    cov1 = pd.DataFrame()
+    # Iterate over each column in df
+    df = pd.DataFrame()
+    for col1 in y.columns:
+            # Calculate the covariance between the two columns and store the result in the covariance dataframe
+            df['a'] = y[col1]
+            df['b'] = x[col1]
+            
+            col_name = f'{col1}'
+            covariance[col_name] = df.rolling(d).corr().unstack()['a']['b']
+            cov1 = pd.concat([cov1,covariance])
+    return cov1
 
 def ts_co_skewness(y, x, d):
     pass
@@ -157,7 +191,21 @@ def ts_count_nans(x ,d):
     pass
 
 def ts_covariance(y, x, d):
-    pass
+    # Create an empty dataframe to store the covariance results
+    covariance = pd.DataFrame()
+    cov1 = pd.DataFrame()
+    # Iterate over each column in df
+    df = pd.DataFrame()
+    for col1 in y.columns:
+            # Calculate the covariance between the two columns and store the result in the covariance dataframe
+            df['a'] = y[col1]
+            df['b'] = x[col1]
+            
+            col_name = f'{col1}'
+            covariance[col_name] = df.rolling(d).cov().unstack()['a']['b']
+            cov1 = pd.concat([cov1,covariance])
+    return cov1
+
 
 def ts_decay_exp(x,d,f=1):    
     def TS_Decay_Exp_Window(x, d, factor = 1):
