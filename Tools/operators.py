@@ -33,6 +33,21 @@ def arc_cos(x):
 def arc_sin(x):
     return x.transform(np.arcsin)
 
+def clamp(x, lower = 0, upper = 0, inverse = False, mask = ""):
+    q = if_else(x < lower, lower, x)
+    u = if_else(q > upper, upper, q)
+    v = if_else(x > lower & x < upper, mask, x)
+    return if_else(inverse, v, u)
+
+def left_tail(x, maximum = 0):
+    return if_else(x>maximum,np.nan,x)
+
+def right_tail(x, minimum = 0):
+    return if_else(x<minimum,np.nan,x)
+
+def tail(x, lower = 0, upper = 0, newval = 0):
+    return if_else(lower<x & x<upper,newval,x)
+
 def arc_tan(x):
     return x.transform(np.arctan)
 
@@ -43,6 +58,7 @@ def tanh(x):
     return x.transform(np.tanh)            
 
 # Cross Sectional Operators
+
 def rank(x):
     p = x.rank(axis=1,ascending=True)
     return p.sub(p.min(axis=1),axis=0).div(p.max(axis=1).sub(p.min(axis=1),axis=0),axis=0)
@@ -95,19 +111,20 @@ def days_from_last_change(x):
     pass
 
 def ts_weighted_delay(x, k=0.5):
-    pass
+    """Instead of replacing today’s value with yesterday’s as in ts_delay(x,1), it assigns weighted average of today’s and yesterday’s values with weight on today’s value being k and yesterday’s being (1-k)"""
+    return k*x + (1-k)*ts_delay(x,1)
 
 def hump(x, hump = 0.01):
     pass
 
 def hump_decay(x, p=0):
-    pass
+    return if_else(abs(x - ts_delay(x))> p * abs(x + ts_delay(x)), x, ts_delay(x))
 
 def inst_tvr(x, d):
     pass
 
 def jump_decay(x, d, sensitivity=0.5, force=0.1):
-    pass
+    return if_else(abs(x-ts_delay(x, 1)) > sensitivity * ts_std(x,d), ts_delay(x,1) + ts_delta(x, 1) * force, x)
 
 def kth_element(x, d, k=1):
     pass
@@ -116,10 +133,10 @@ def last_diff_value(x, d):
     pass
 
 def ts_arg_max(x, d):
-    pass
+    return x.rolling(d).agg(np.argmax)
 
 def ts_arg_min(x, d):
-    pass
+    return x.rolling(d).agg(np.argmin)
 
 def ts_av_diff(x, d):
     return x-ts_mean(x,d)
@@ -190,6 +207,7 @@ def ts_min(x,d):
     return x.rolling(d).min()
 
 def ts_min_diff(x, d):
+    """Returns x - ts_min(x, d)"""
     return x-ts_min(x,d)
 
 def ts_min_max_cps(x, d, f = 2):
@@ -211,10 +229,30 @@ def ts_partial_corr(x, y, z, d):
     pass
 
 def ts_percentage(x, d, percentage=0.5):
-    pass
+    return x.rolling(10).agg(lambda i: np.quantile(i, q=percentage))
 
-def ts_poly_regression(y, x, d, k = 1):
-    pass
+def ts_poly_regression(x, y, d,k=1):
+    """
+    Calculates y - Ey where Ey = x + x^2 + ... + x^k over d days
+    
+    Parameters:
+    x (pandas.DataFrame): input data
+    y (pandas.DataFrame): data to subtract mean from
+    k (int): highest power of x to include in the mean calculation
+    d (int): number of days to include in the mean calculation
+    
+    Returns:
+    pandas.DataFrame: y - Ey
+    """
+    # Calculate the rolling mean of x^i for i in [1, k]
+    ex = sum([x**i for i in range(1, k+1)])
+    ex = ex.rolling(d).mean()
+    
+    # Subtract rolling mean from y
+    result = y - ex
+    
+    return result
+
 
 def ts_product(x,d):
     return x.rolling(d).apply(np.prod)
@@ -250,7 +288,10 @@ def ts_triple_corr(x, y, z, d):
     pass
 
 def ts_zscore(x,d):
-    return((x-x.rolling(d).mean())/x.rolling(d).std())
+    """
+    Z-score is a numerical measurement that describes a value's relationship to the mean of a group of values. Z-score is measured in terms of standard deviations from the mean: (x - tsmean(x,d)) / tsstddev(x,d)
+    """
+    return((x-ts_mean(x,d))/ts_std(x,d))
 
 def ts_entropy(x,d):
     pass
