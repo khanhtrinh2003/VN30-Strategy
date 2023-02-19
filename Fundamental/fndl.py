@@ -5,7 +5,7 @@ from vnstock import *
 
 def fndl(field="asset"):
     data = pd.read_csv("D:/KTrinh/python/VN30-Strategy/Fundamental/total.csv",index_col="CHỈ TIÊU")
-    data.drop('Unnamed: 0',axis=1, inplace=True)
+    # data.drop('Unnamed: 0',axis=1, inplace=True)
     df = data.groupby([data.index,"ticker"]).agg(sum).T
     
     close = pd.read_csv("D:\KTrinh\python\VN30-Strategy\Data\close.csv", index_col="TradingDate", parse_dates=True)
