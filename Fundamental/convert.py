@@ -1,4 +1,5 @@
 converter = {
+    # Income Statements
     "Chi phí hoạt động khác": "none",
     "Chi phí trực tiếp kinh doanh hoạt động khác": "none",
     "Lãi trên cổ phiếu pha loãng": "none",
