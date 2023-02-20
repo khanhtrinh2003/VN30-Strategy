@@ -7,7 +7,7 @@ converter = {
     "Thu đòi người thứ ba": "none",
     "Chi phí khác": "cost",
     "Thu nhập từ hoạt động dịch vụ": "income",
-    "Thu nhập khác hoạt động kinh doanh bảo hiểm ": "fnd6_iitsa",
+    "Thu nhập khác hoạt động kinh doanh bảo hiểm ": "iitsa",
     "Lợi nhuận chưa thực hiện": "none",
     "Thu nhập lãi và các khoản thu nhập tương tự": "income",
     "Lợi ích cổ đông thiểu số ": "none",

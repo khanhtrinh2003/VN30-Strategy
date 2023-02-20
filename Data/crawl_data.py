@@ -11,7 +11,7 @@ ticket = ['ACB', 'BCM', 'BID', 'BVH', 'CTG', 'FPT', 'GAS', 'GVR', 'HDB', 'HPG', 
 frame = []
 for i in ticket:
     a = stock_historical_data(symbol=i, 
-                            start_date="2023-02-18",
+                            start_date=formatted_date,
                             end_date=formatted_date)
     a["ticker"] = i
     frame.append(a)
