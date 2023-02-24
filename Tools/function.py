@@ -29,6 +29,17 @@ def weights(alpha,neutrali=0):
     alpha[alpha > 0.2] = 0.2
     return alpha
 
+def long_only(alpha,neutrali=0):
+    # Normalize
+    alpha = alpha.div(alpha.abs().sum(axis=1), axis=0)
+    # Set none if nan > 20
+    di = alpha.index.where(alpha.isnull().sum(axis = 1) >= 20)
+    di = di[~np.isnan(di)]
+    alpha.loc[di] = None
+    # Max stock weight = 0.2
+    alpha[alpha > 0.2] = 0.2
+    return alpha    
+
 def prob_weights(prices,lag):    
     lag = lag
     diff_data = prices.diff()
